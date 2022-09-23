@@ -1,2 +1,8 @@
 #Ignore server token
 .serverToken
+
+#ignore SSH
+.ssh/
+
+#ignore pat.txt
+.git/pat.txt
