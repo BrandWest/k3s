@@ -1,0 +1,42 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+  
+  tasks:
+    - name: set the memory constraints
+      ansible.builtin.lineinfile:
+        path: /boot/cmdline.txt
+        backup: yes
+        state: present
+        insertafter: EOF
+        line: cgroup_memory=1 cgroup_enable=memory 
+    
+    - name: set the ip information, no gateway
+      ansible.builtin.lineinfile:
+        path: /boot/cmdline.txt
+        backup: yes
+        state: present
+        insertafter: EOF
+        line: ip=:::255.255.255.0::eth0:off
+
+    - name: Set the arm mode
+      ansible.builtin.lineinfile:
+        path: /boot/config.txt
+        backup: yes
+        state: present
+        insertafter: EOF
+        line: add arm_64bit=1
+
+    - name: Reboot the machine
+      shell: "sleep 5 && reboot"
+
+      async: 1
+      poll: 0
+
+    - name: Wait for the machine to come back online
+      wait_for_connection:
+        connect_timeout: 60
+        sleep: 5
+        delay: 5
+        timeout: 300

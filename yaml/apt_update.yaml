@@ -1,0 +1,44 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+  
+  tasks:
+    - name: update apt
+      remote_user: "caboose"
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+        cache_valid_time: 3600
+
+    - name: Upgrade PI packages
+      apt: 
+        upgrade: dist
+        force_apt_get: yes
+
+    - name: Auto Remove and clean
+      remote_user: "caboose"
+      apt:
+        autoclean: yes
+        autoremove: yes
+
+    - name: Install Dependencies
+      remote_user: "caboose"
+      apt:
+        state: present
+        name:
+          - iptables
+
+    - name: Reboot the machine
+      shell: "sleep 5 && reboot"
+
+      async: 1
+      poll: 0
+
+    - name: Wait for the machine to come back online
+      wait_for_connection:
+        connect_timeout: 60
+        sleep: 5
+        delay: 5
+        timeout: 300
+        
