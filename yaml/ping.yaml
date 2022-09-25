@@ -1,0 +1,10 @@
+- name: ping conductor
+  hosts: conductor
+  tasks:
+   - name: ping conductor
+     ansible.builtin.ping:
+- name: ping nodes
+  hosts: nodes
+  tasks:
+   - name: ping nodes
+     ansible.builtin.ping:
