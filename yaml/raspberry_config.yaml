@@ -18,7 +18,7 @@
         backup: yes
         state: present
         insertafter: EOF
-        line: ip=:::255.255.255.0::eth0:off
+        line: ip=10.0.0.246:::255.255.255.0::eth0:off
 
     - name: Set the arm mode
       ansible.builtin.lineinfile:

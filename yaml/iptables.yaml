@@ -1,0 +1,6 @@
+- hosts: conductor
+  become: true
+  become_user: root
+  tasks:
+    - name: enable alternate IP TABLES
+      

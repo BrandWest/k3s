@@ -6,3 +6,6 @@
 
 #ignore pat.txt
 .git/pat.txt
+
+#Vault file
+vault.txt
