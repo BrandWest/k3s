@@ -1,7 +1,8 @@
 ---
 - hosts: all
-  become: true
+  become: yes
   become_user: root
+  # become_user_password: "DR!87wi93fi!!*"
   
   tasks:
     - name: update apt
