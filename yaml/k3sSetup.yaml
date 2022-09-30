@@ -1,0 +1,82 @@
+- name: Set up Conductor
+  hosts: conductor
+  become: true
+  become_user: root
+
+  tasks:
+    # - name: enable alternate IP TABLES
+    #   ansible.builtin.shell:
+    #     cmd: sudo iptables -F 
+    
+    # - name: sudo update-alternatives IPv4
+    #   ansible.builtin.shell:
+    #     cmd: update-alternatives --set iptables /usr/sbin/iptables-legacy 
+   
+    # - name: enable alternate IP Tables IPv6
+    #   ansible.builtin.shell:
+    #     cmd: update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy 
+    
+    # - name: reboot
+    #   shell: "sleep 5 && reboot"
+    #   async: 1
+    #   poll: 0
+
+    # - name: Wait for the machine to come back online
+    #   wait_for_connection:
+    #     connect_timeout: 60
+    #     sleep: 5
+    #     delay: 5
+    #     timeout: 300
+            
+    # - name: get k3s
+    #   ansible.builtin.shell:
+    #     cmd: curl -sfL https://get.k3s.io | sh -s -
+    #     # dest: /tmp/k3s_install.sh
+
+    # - name: install k3s
+    #   ansible.builtin.shell:
+    #     cmd: cat /tmp/k3s_install.sh | sh -s -
+        #  K3S_KUBECONFIG_MODE="644" sh -s -
+    
+    # - name: get token
+    #   ansible.builtin.fetch:
+    #     src: /var/lib/rancher/k3s/server/node-token
+    #     dest: /home/caboose/codingProjects/kubernetes/k3s/files/token.txt
+
+- name: Set up Nodes
+  hosts: nodes
+  become: true
+  become_user: root
+  vars:
+    token: "{{ lookup('ansible.builtin.file', '/home/caboose/codingProjects/kubernetes/k3s/files/token.txt/conductor/var/lib/rancher/k3s/server/node-token') }}"
+
+  tasks:
+    - debug:
+        var: token
+    
+    - name: cmdline.txt
+      ansible.builtin.shell:
+        cmd: echo "cgroup_memory=1 cgroup_enable=memory" >> /boot/cmdline.txt
+
+    - name: append to config.txt
+      ansible.builtin.shell:
+        cmd: echo "add arm_64bit=1" >> /boot/config.txt
+
+    - name: reboot
+      shell: "sleep 5 && reboot"
+      async: 1
+      poll: 0
+
+    - name: Wait for the machine to come back online
+      wait_for_connection:
+        connect_timeout: 60
+        sleep: 5
+        delay: 5
+        timeout: 300
+        
+    - name: install k3s 
+      loop: "{{ groups['nodes'] }}"
+        # loop_control:
+      #   extended: yes
+      ansible.builtin.shell:
+        cmd: curl -sfL https://get.k3s.io | K3S_TOKEN="{{ token }}" K3S_URL="https://10.0.0.246:6443" K3S_NODE_NAME="{{ lookup('vars', ansible_loop_var )}}" sh -

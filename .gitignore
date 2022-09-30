@@ -9,3 +9,9 @@
 
 #Vault file
 vault.txt
+
+#configs
+.config/
+
+#Ignore the server token
+files/token.txt/conductor/var/lib/rancher/k3s/server/node-token

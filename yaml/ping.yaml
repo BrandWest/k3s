@@ -3,6 +3,7 @@
   tasks:
    - name: ping conductor
      ansible.builtin.ping:
+
 - name: ping nodes
   hosts: nodes
   tasks:

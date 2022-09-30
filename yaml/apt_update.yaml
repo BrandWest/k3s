@@ -2,8 +2,10 @@
 - hosts: all
   become: yes
   become_user: root
-  # become_user_password: "DR!87wi93fi!!*"
-  
+
+  # vars_files:
+  # - ../.config/password.yaml
+    
   tasks:
     - name: update apt
       remote_user: "caboose"

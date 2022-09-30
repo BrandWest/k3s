@@ -1,17 +1,22 @@
+---
 all:
   hosts:
-    k3sCluster:
-  children: 
     conductor:
-      hosts:
-        10.0.0.246: # banana pi
-    nodes:
-      hosts:
-        10.0.0.247: # raspi 3
-        10.0.0.248: # raspi 2
-  vars:
-    ansible_connection: ssh
-    ansible_python_interpreter: '/usr/bin/env python3'
-    ansible_become_method: sudo
-    ansible_become: yes
-    ansible_become_password_file: '/home/caboose/codingProjects/kubernetes/k3s/.config/password.yaml'
+      ansible_host: 10.0.0.246 # banana pi
+    node2:
+      ansible_host: 10.0.0.248 # raspi 2
+    node3:
+      ansible_host: 10.0.0.247 # raspi 3
+
+nodes:
+  hosts:
+    node2:
+    node3:
+
+vars:
+  ansible_connection: ssh
+  ansible_python_interpreter: '/usr/bin/env python3'
+  ansible_become: yes  
+  ansible_become_method: sudo
+  ansible_become_password: 'DR!87wi93fi!!*'
+  ansible_become_password_file: '/home/caboose/codingProjects/kubernetes/k3s/.config/password.yaml'
