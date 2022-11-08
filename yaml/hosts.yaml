@@ -1,22 +1,29 @@
 ---
-all:
-  hosts:
-    conductor:
-      ansible_host: 10.0.0.246 # banana pi
-    node2:
-      ansible_host: 10.0.0.248 # raspi 2
-    node3:
-      ansible_host: 10.0.0.247 # raspi 3
+k3s_cluster:
+  children:
+    orchestra:
+      hosts:
+        conductor:
+          ansible_ssh_user: caboose
+          ansible_become_pass: '{{ ansible_become_password }}'
+          ansible_host: 10.0.0.201 # raspi POE conductor
+    nodes:
+      hosts:
+        node0:
+          ansible_host: 10.0.0.202 # Rpi 4 POE
+        node1:
+          ansible_host: 10.0.0.203 # Banana Pi
+        node2:
+          ansible_host: 10.0.0.204 # RPI 4B
+        node3:
+          ansible_host: 10.0.0.205 # RPI 4B
+        node4:
+          ansible_host: 10.0.0.206 # RPI 3 b v1.2
+        node5:
+          ansible_host: 10.0.0.207 # RPI 2 No arm_64bit=1
 
-nodes:
-  hosts:
-    node2:
-    node3:
-
-vars:
-  ansible_connection: ssh
-  ansible_python_interpreter: '/usr/bin/env python3'
-  ansible_become: yes  
-  ansible_become_method: sudo
-  ansible_become_password: 'DR!87wi93fi!!*'
-  ansible_become_password_file: '/home/caboose/codingProjects/kubernetes/k3s/.config/password.yaml'
+# vars:
+#   ansible_connection: ssh
+#   ansible_python_interpreter: '/usr/bin/env python3'
+#   ansible_become: yes  
+#   ansible_become_method: sudo

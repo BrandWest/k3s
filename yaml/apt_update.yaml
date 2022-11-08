@@ -2,11 +2,19 @@
 - hosts: all
   become: yes
   become_user: root
-
-  # vars_files:
-  # - ../.config/password.yaml
-    
+  
+  vars_files:
+    - /home/caboose/codingProjects/kubernetes/k3s/.config/password.yaml
+  
+  vars:
+    ansible_become_pass: '{{ ansible_sudo_password }}'
+  
   tasks:
+    # - name: update Raspi
+    #   remote_user: "caboose"
+    #   ansible.builtin.shell:
+    #     cmd: sudo PRUNE_MODULES=1 RPI_REBOOT=1 SKIP_WARNING=1 rpi-update
+      
     - name: update apt
       remote_user: "caboose"
       apt:

@@ -1,11 +1,13 @@
-- name: ping conductor
-  hosts: conductor
+---
+- hosts: k3s_cluster
+  vars_files:
+    - /home/caboose/codingProjects/kubernetes/k3s/.config/password.yaml
+  
+  vars:
+    ansible_become_pass: '{{ ansible_sudo_password }}'
   tasks:
-   - name: ping conductor
-     ansible.builtin.ping:
+    - name: ping cluster
+      action: ping
+      register: hello
+    - debug: msg="{hello.stdout}"
 
-- name: ping nodes
-  hosts: nodes
-  tasks:
-   - name: ping nodes
-     ansible.builtin.ping:
