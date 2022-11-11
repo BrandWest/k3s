@@ -1,0 +1,52 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  
+  vars_files:
+    - /home/caboose/codingProjects/kubernetes/k3s/.config/password.yaml
+  
+  vars:
+    ansible_become_pass: '{{ ansible_sudo_password }}'
+  
+  tasks:
+    - name: update apt
+      remote_user: "caboose"
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+        cache_valid_time: 3600
+
+    # - name: Install Dependencies
+    #   remote_user: "caboose"
+    #   apt:
+    #     state: present
+    #     name:
+    #       - raspberrypi-kernel 
+    #       - raspberrypi-kernel-headers
+
+    - name: Install Docker
+      remote_user: "caboose"
+      ansible.builtin.shell:
+        cmd: curl -sSL https://get.docker.com | sh
+
+    - name: add usergroup
+      ansible.builtin.user:
+        append: yes
+        name: caboose
+        groups: docker
+
+
+    - name: Reboot the machine
+      shell: "sleep 5 && reboot"
+
+      async: 1
+      poll: 0
+
+    - name: Wait for the machine to come back online
+      wait_for_connection:
+        connect_timeout: 60
+        sleep: 5
+        delay: 5
+        timeout: 300
+        
